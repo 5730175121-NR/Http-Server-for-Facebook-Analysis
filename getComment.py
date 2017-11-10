@@ -25,7 +25,7 @@ def getComments(token, since):
                     next_page_of_comment_url = post['comments']['paging']['next'] 
                 while next_page_of_comment_url != '':
                     next_page_of_comment = requests.get(next_page_of_comment_url).json()
-                    list_of_comments += [(comment['from']['id'], comment['from']['name']) for comment in post['data']['comments']]
+                    list_of_comments += [(comment['from']['id'], comment['from']['name']) for comment in post['comments']['data']]
                     if 'next' in next_page_of_comment['paging']:
                         next_page_of_comment_url = next_page_of_comment['paging']['next']
                     else:
