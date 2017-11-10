@@ -48,7 +48,7 @@ def getComments(token, since):
 
     for friend_comments in list_of_comments:
         if friend_comments[0] not in count_friend_comments:
-            count_friend_comments[friend_comments[0]] = 0
+            count_friend_comments[friend_comments[0]] = 1
             friend_comments_name[friend_comments[0]] = friend_comments[1]
         else:
             count_friend_comments[friend_comments[0]] += 1
