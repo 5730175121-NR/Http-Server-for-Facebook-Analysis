@@ -56,6 +56,6 @@ def getComments(token, since):
     jsonDict["friends"] = []
 
     for element in count_friend_comments:
-        jsonDict["friends"] += { "name" : element[0], "like" : element[1]}
+        jsonDict["friends"] += { element[0], element[1]}
 
     return json.dumps(jsonDict)
