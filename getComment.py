@@ -50,15 +50,10 @@ def getComments(token, since):
             count_friend_comments[friend_comments[0]] += 1
 
     count_friend_comments = sorted(count_friend_comments.items(), key=operator.itemgetter(1), reverse=True)
-    print("list")
-    print(count_friend_comments)
 
     jsonDict = {}
 
     for element in count_friend_comments:
         jsonDict[element[0]] = element[1]
 
-    print("dict")
-    print(jsonDict)
-    
     return json.dumps(jsonDict)

@@ -29,7 +29,6 @@ class Handler(BaseHTTPRequestHandler):
 
 class ThreadedHTTPServer(ThreadingMixIn, HTTPServer):
     """Handle requests in a separate thread."""
-    print("threaded")
 
 
 if __name__ == '__main__':
