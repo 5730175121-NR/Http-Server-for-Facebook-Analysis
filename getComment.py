@@ -18,14 +18,14 @@ def getComments(token, since):
     while True:
         for post in list_of_posts:
             if 'comments' in post:
-                list_of_comments += [(comment['from']['name'], comment['message'])for comment in post['comments']['data']]
+                list_of_comments += [(comment['from']['id'], comment['from']['name'])for comment in post['comments']['data']]
                 next_page_of_comment_url = ''
                 next_page_of_comment = {}
                 if 'next' in post['comments']['paging']:
                     next_page_of_comment_url = post['comments']['paging']['next'] 
                 while next_page_of_comment_url != '':
                     next_page_of_comment = requests.get(next_page_of_comment_url).json()
-                    list_of_comments += [(comment['from']['name'], comment['message'])for comment in post['comments']['data']]
+                    list_of_comments += [(comment['from']['id'], comment['from']['name']) for comment in post['data']['comments']]
                     if 'next' in next_page_of_comment['paging']:
                         next_page_of_comment_url = next_page_of_comment['paging']['next']
                     else:
@@ -43,9 +43,13 @@ def getComments(token, since):
         content = requests.get(url).json()
         list_of_posts = [post for post in content['data']]
 
+    count_friend_comments = {}
+    friend_comments_name = {}
+
     for friend_comments in list_of_comments:
         if friend_comments[0] not in count_friend_comments:
-            count_friend_comments[friend_comments[0]] = 1
+            count_friend_comments[friend_comments[0]] = 0
+            friend_comments_name[friend_comments[0]] = friend_comments[1]
         else:
             count_friend_comments[friend_comments[0]] += 1
 
@@ -53,17 +57,14 @@ def getComments(token, since):
 
     jsonDict = {}
 
-    jsonDict['friends'] = []
     list_of_friends = []
 
-    for element in count_friend_comments:
-        temp = {}
-        
-        temp['name'] = element[0]
-        temp['comments'] = element[1]
-        print(temp['name'] + " , " + str(temp['comments']))
-        list_of_friends.append(temp)
+    pic_link = ''
 
+    for element in count_friend_comments:
+        pic_link = 'https://graph.facebook.com/v2.10/%s/picture' % (element[0])
+        list_of_friends.append({'id' : element[0], 'name': friend_comments_name[element[0]], 'comments' : element[1], 'pic' : pic_link})
+    
     jsonDict['friends'] = list_of_friends
 
     return json.dumps(jsonDict)
