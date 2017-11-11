@@ -1,14 +1,6 @@
 import requests
 import json
 
-def query_spliter(querys):
-    query_dict = {}
-    query_list = querys.split('&')
-    for query in query_list:
-        temp = query.split('=')
-        query_dict[temp[0]] = temp[1].split(',')
-    return query_dict
-
 def getData(access_token, fields):
     base_url = 'https://graph.facebook.com/v2.10/me'
     url = '%s?fields=%s&access_token=%s' % (base_url,fields,access_token)
@@ -35,11 +27,9 @@ def getData(access_token, fields):
             next_page_url = ''
     
     return list_of_data
-
-def top_comments(access_token,since = '', top = ''):
-    fields = 'posts{comments{from}}'
-    if since != '':
-        fields = 'posts.since(%s){comments{from}}' % (since)
-    data = getData(access_token, fields)
     
 
+fields = 'posts.since(-2 year){comments{message,permalink_url,from}}'
+access = 'EAACEdEose0cBAPWWgPXvtsvZAOg7W3hM7E7vB0zGue5sXRbZAZAc9hJrWANkXR3aYb4QfSoPZC5S2cJdj3QIzCUZAN4LipgqdFIZBUVRZCIuiFPfGQIoTTCtP6AWx69RZB2rx3cEuaLht8u42ltHsFR9QMAWQdiGaiME6QMLZAZCbuZCYJm7QjWIPKXlA6UOH6ZAysoZD'
+print(getDataFacebook(access, fields))
+# getDataFacebook(access, fields)
