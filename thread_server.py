@@ -56,7 +56,7 @@ if __name__ == '__main__':
         print('error configuration file : use "localhost" and port : 8080')
         pass
     server = ThreadedHTTPServer((host, port), Handler)
-    print('Starting server, use <Ctrl-C> to stop')
+    print('Starting server on %s port: %s, use <Ctrl-C> to stop' % (host, port))
     try:
         server.serve_forever()
     except KeyboardInterrupt:
