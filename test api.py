@@ -11,8 +11,7 @@ def a():
 def b():
     print('b')
 
-data = open('configuration.txt','r')
-dicts = data.read()
-lists = dicts.split('\n')
+data = open('configuration','r')
 
-print(lists)
+
+print(data.readlines())
