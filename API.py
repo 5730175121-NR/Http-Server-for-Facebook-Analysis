@@ -1,6 +1,7 @@
 import requests
 import json
 import operator
+import time
 
 def navigator(path, querys):
     query_dict = query_spliter(querys)
@@ -27,6 +28,7 @@ def query_spliter(querys):
     return query_dict
 
 def getData(access_token, fields):
+    start = time.time()
     base_url = 'https://graph.facebook.com/v2.10/me'
     url = '%s?fields=%s&access_token=%s' % (base_url,fields,access_token)
     content = requests.get(url).json()
@@ -50,7 +52,8 @@ def getData(access_token, fields):
                 next_page_url = content['paging']['next']
         else:
             next_page_url = ''
-    
+    end = time.time()
+    print('fetching data finished in : %s secs' % str('%.3f' % (end - start)))
     return list_of_data
 
 def top_comments(access_token,since = '', top = ''):
@@ -60,6 +63,7 @@ def top_comments(access_token,since = '', top = ''):
     if since != '':
         fields = 'posts.since(%s){comments{from}}' % (since)
     list_of_posts = getData(access_token, fields)
+    start = time.time()
     for post in list_of_posts:
         if 'comments' in post:
             for comment in post['comments']['data']:
@@ -102,7 +106,8 @@ def top_comments(access_token,since = '', top = ''):
         top_count += 1
         if top_count == top:
             break
-    
+    end = time.time()
+    print('top comments finished in : %s secs' % str('%.3f' % (end - start)))
     return list_of_friends
     
 def top_likes(access_token,since = '', top = ''):
@@ -112,6 +117,7 @@ def top_likes(access_token,since = '', top = ''):
     if since != '':
         fields = 'posts.since(%s){likes{id,name,pic}}' % since
     list_of_posts = getData(access_token, fields)
+    start = time.time()
     for post in list_of_posts:
         if 'likes' in post:
             for like in post['likes']['data']:
@@ -152,6 +158,8 @@ def top_likes(access_token,since = '', top = ''):
         top_count += 1
         if top_count == top:
             break
+    end = time.time()
+    print('top likes finished in : %s secs' % str('%.3f' % (end - start)))
     return list_of_friends
 
                 
