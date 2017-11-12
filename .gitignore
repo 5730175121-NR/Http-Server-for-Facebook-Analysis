@@ -1,5 +1,5 @@
-######PYHTON_CACHE######
+# python cache
 __pycache__/*
 
-######CONFIGURATION_FILE######
+# configuration file
 configuration
