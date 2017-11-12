@@ -36,7 +36,22 @@ class ThreadedHTTPServer(ThreadingMixIn, HTTPServer):
 
 
 if __name__ == '__main__':
-    server = ThreadedHTTPServer(('localhost', 8080), Handler)
+    host = 'localhost'
+    port = 8080
+    try:
+        configuration_file = open('configuration','r')
+        configuration = {}    
+        for line in configuration_file:
+            (key,val) = line.split(':')
+            configuration[key] = val
+        if 'host' in configuration:
+            host = configuration['host']
+        if 'port' in configuration:
+            port = int(configuration['port'])
+    except:
+        print('error configuration file : use "localhost" and port : 8080')
+        pass
+    server = ThreadedHTTPServer((host, port), Handler)
     print('Starting server, use <Ctrl-C> to stop')
     try:
         server.serve_forever()
