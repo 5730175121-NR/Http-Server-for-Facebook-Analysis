@@ -52,7 +52,7 @@ if __name__ == '__main__':
         configuration_file.close()
     except:
         configuration_file = open('configuration','w')
-        configuration_file.write("'host:'localhost'\n'port':'8080'")
+        configuration_file.write("host:localhost\nport:8080")
         configuration_file.close()
         print('configuration file is not found : use "localhost" and port : 8080 as default')
         pass
