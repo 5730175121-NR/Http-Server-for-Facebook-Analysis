@@ -41,7 +41,8 @@ if __name__ == '__main__':
     try:
         configuration_file = open('configuration','r')
         configuration = {}    
-        for line in configuration_file:
+        for line in configuration_file.readlines():
+            line = line.strip('\n')
             (key,val) = line.split(':')
             configuration[key] = val
         if 'host' in configuration:
