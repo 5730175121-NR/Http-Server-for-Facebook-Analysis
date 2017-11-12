@@ -48,7 +48,11 @@ if __name__ == '__main__':
             host = configuration['host']
         if 'port' in configuration:
             port = int(configuration['port'])
+        configuration_file.close()
     except:
+        configuration_file = open('configuration','w')
+        configuration_file.write("'host:'localhost'\n'port':'8080'")
+        configuration_file.close()
         print('error configuration file : use "localhost" and port : 8080')
         pass
     server = ThreadedHTTPServer((host, port), Handler)
