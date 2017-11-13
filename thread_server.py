@@ -5,8 +5,6 @@ from API import *
 import time
 import json
 import threading
-import socket
-
 
 class Handler(BaseHTTPRequestHandler):
 
@@ -36,7 +34,6 @@ class ThreadedHTTPServer(ThreadingMixIn, HTTPServer):
 
 
 if __name__ == '__main__':
-    print(socket.gethostbyname(socket.gethostname()))
     host = 'localhost'
     port = 8080
     try:
@@ -47,10 +44,7 @@ if __name__ == '__main__':
             (key,val) = line.split(':')
             configuration[key] = val
         if 'host' in configuration:
-            if configuration['host'] == 'host ip':
-                host = str(socket.gethostbyname(socket.gethostname()))
-            else:
-                host = configuration['host']
+            host = configuration['host']
         if 'port' in configuration:
             port = int(configuration['port'])
         configuration_file.close()
