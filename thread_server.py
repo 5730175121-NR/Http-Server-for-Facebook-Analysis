@@ -27,7 +27,7 @@ class Handler(BaseHTTPRequestHandler):
         self.wfile.write(json.dumps(dict_data).encode('utf-8'))       
 
 class ThreadedHTTPServer(ThreadingMixIn, HTTPServer):
-    """Handle requests in a separate thread."""
+    pass
 
 
 if __name__ == '__main__':
@@ -57,6 +57,5 @@ if __name__ == '__main__':
         server.serve_forever()
     except KeyboardInterrupt:
         pass
-    cleanup_stop_thread()
     server.server_close()
     print('server is closed.')
