@@ -37,6 +37,7 @@ def getData(access_token, fields):
         list_of_data = [data for data in content['posts']['data']]
     except:
         print('error : please check ur access token!')
+        print(content)
         return content
 
     next_page_url = ''
