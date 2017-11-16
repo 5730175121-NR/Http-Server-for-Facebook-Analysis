@@ -61,9 +61,9 @@ def getData(access_token, fields):
 def top_comments(access_token,since = '', top = ''):
     dict_of_friends = {}
     dict_of_comments = {}
-    fields = 'posts{comments{from}}'
+    fields = 'posts{comments{from,comments{from}}}'
     if since != '':
-        fields = 'posts.since(%s){comments{from}}' % (since)
+        fields = 'posts.since(%s){comments{from,comments{from}}}' % (since)
     list_of_posts = getData(access_token, fields)
     if 'error' in list_of_posts:
         return list_of_posts
@@ -76,6 +76,31 @@ def top_comments(access_token,since = '', top = ''):
                     dict_of_comments[comment['from']['id']] = 1
                 else:
                     dict_of_comments[comment['from']['id']] += 1
+                if 'comments' in comment:
+                    for sub_com in comment['comments']['data']:
+                        if sub_com['from']['id'] not in dict_of_friends:
+                            dict_of_friends[sub_com['from']['id']] = sub_com['from']['name']
+                            dict_of_comments[sub_com['from']['id']] = 1
+                        else:
+                            dict_of_comments[sub_com['from']['id']] += 1                        
+                    next_page_of_sub_com = {}
+                    next_page_of_sub_com_url = ''
+                    if 'next' in comment['comments']['paging']:
+                        next_page_of_sub_com_url = comment['comments']['paging']['next']
+                    while next_page_of_sub_com_url != '':
+                        next_page_of_sub_com = requests.get(next_page_of_sub_com_url).json()
+                        for sub_com in next_page_of_sub_com_url['data']:
+                            if sub_com['from']['id'] not in dict_of_friends:
+                                dict_of_friends[sub_com['from']['id']] = sub_com['from']['name']
+                                dict_of_comments[sub_com['from']['id']] = 1
+                            else:
+                                dict_of_comments[sub_com['from']['id']] += 1
+                        if 'paging' not in next_page_of_sub_com:
+                            next_page_of_sub_com_url = ''
+                        if 'next' in next_page_of_sub_com['paging']:
+                            next_page_of_sub_com_url = next_page_of_sub_com['paging']['next']
+                        else:
+                            next_page_of_sub_com_url = ''
             next_page_of_comment = {}
             next_page_of_comment_url = ''
             if 'next' in post['comments']['paging']:
@@ -88,6 +113,31 @@ def top_comments(access_token,since = '', top = ''):
                         dict_of_comments[comment['from']['id']] = 1
                     else:
                         dict_of_comments[comment['from']['id']] += 1
+                    if 'comments' in comment:
+                        for sub_com in comment['comments']['data']:
+                            if sub_com['from']['id'] not in dict_of_friends:
+                                dict_of_friends[sub_com['from']['id']] = sub_com['from']['name']
+                                dict_of_comments[sub_com['from']['id']] = 1
+                            else:
+                                dict_of_comments[sub_com['from']['id']] += 1                        
+                        next_page_of_sub_com = {}
+                        next_page_of_sub_com_url = ''
+                        if 'next' in comment['comments']['paging']:
+                            next_page_of_sub_com_url = comment['comments']['paging']['next']
+                        while next_page_of_sub_com_url != '':
+                            next_page_of_sub_com = requests.get(next_page_of_sub_com_url).json()
+                            for sub_com in next_page_of_sub_com_url['data']:
+                                if sub_com['from']['id'] not in dict_of_friends:
+                                    dict_of_friends[sub_com['from']['id']] = sub_com['from']['name']
+                                    dict_of_comments[sub_com['from']['id']] = 1
+                                else:
+                                    dict_of_comments[sub_com['from']['id']] += 1
+                            if 'paging' not in next_page_of_sub_com:
+                                next_page_of_sub_com_url = ''
+                            if 'next' in next_page_of_sub_com['paging']:
+                                next_page_of_sub_com_url = next_page_of_sub_com['paging']['next']
+                            else:
+                                next_page_of_sub_com_url = ''
                 if 'paging' not in next_page_of_comment:
                     next_page_of_comment_url = ''
                 if 'next' in next_page_of_comment['paging']:
@@ -117,9 +167,9 @@ def top_comments(access_token,since = '', top = ''):
 def top_likes(access_token,since = '', top = ''):
     dict_of_friends = {}
     dict_of_likes = {}
-    fields = 'posts{likes{id,name,pic}}'
+    fields = 'posts{comments{from,comments{from}}}'
     if since != '':
-        fields = 'posts.since(%s){likes{id,name,pic}}' % since
+        fields = 'posts.since(%s){comments{from,comments{from}}}' % since
     list_of_posts = getData(access_token, fields)
     if 'error' in list_of_posts:
         return list_of_posts
