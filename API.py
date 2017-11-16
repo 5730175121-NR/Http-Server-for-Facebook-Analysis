@@ -39,7 +39,6 @@ def getData(access_token, fields):
         list_of_data = [data for data in content['posts']['data']]
     except:
         print('error : please check ur access token!')
-        print(content)
         return content
 
     next_page_url = ''
@@ -66,6 +65,8 @@ def top_comments(access_token,since = '', top = ''):
     if since != '':
         fields = 'posts.since(%s){comments{from}}' % (since)
     list_of_posts = getData(access_token, fields)
+    if 'error' in list_of_posts:
+        return list_of_posts
     start = time.time()
     for post in list_of_posts:
         if 'comments' in post:
@@ -120,6 +121,8 @@ def top_likes(access_token,since = '', top = ''):
     if since != '':
         fields = 'posts.since(%s){likes{id,name,pic}}' % since
     list_of_posts = getData(access_token, fields)
+    if 'error' in list_of_posts:
+        return list_of_posts
     start = time.time()
     for post in list_of_posts:
         if 'likes' in post:
@@ -173,6 +176,8 @@ def top_reactions(access_token,since = '', top = ''):
     if since != '':
         fields = 'posts.since(%s){reactions{id,name,pic,type}}' % since
     list_of_posts = getData(access_token, fields)
+    if 'error' in list_of_posts:
+        return list_of_posts
     start = time.time()
     for post in list_of_posts:
         if 'reactions' in post:
