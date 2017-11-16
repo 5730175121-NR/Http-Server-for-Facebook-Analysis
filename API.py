@@ -16,6 +16,8 @@ def navigator(path, querys):
         return top_comments(query_dict['access_token'], since=since, top=top)
     elif path == '/likes':
         return top_likes(query_dict['access_token'], since=since, top=top)
+    elif path == '/reactions':
+        return top_reactions(query_dict['access_token'], since=since, top=top)
     else:
         return ['none']
 
@@ -156,6 +158,73 @@ def top_likes(access_token,since = '', top = ''):
         top = -1
     for friend in dict_of_likes:
         list_of_friends.append({'id' : friend[0], 'name': dict_of_friends[friend[0]][0], 'likes' : friend[1], 'pic' : dict_of_friends[friend[0]][1]})
+        top_count += 1
+        if top_count == top:
+            break
+    end = time.time()
+    print('top likes finished in : %s secs' % str('%.3f' % (end - start)))
+    return list_of_friends
+
+def top_reactions(access_token,since = '', top = ''):
+    dict_of_friends = {}
+    dict_of_total = {}
+    dict_of_reactions = {}
+    fields = 'posts{reactions{id,name,pic,type}}'
+    if since != '':
+        fields = 'posts.since(%s){reactions{id,name,pic,type}}' % since
+    list_of_posts = getData(access_token, fields)
+    start = time.time()
+    for post in list_of_posts:
+        if 'reactions' in post:
+            for reaction in post['reactions']['data']:
+                if reaction['id'] not in dict_of_friends:
+                    dict_of_friends[reaction['id']] = [reaction['name'], reaction['pic']]
+                    dict_of_reactions[reaction['id']] = { 'LIKE' :  0,'LOVE' :  0,'WOW' :  0,'HAHA' :  0,'SAD' :  0,'ANGRY' :  0,'THANKFUL' :  0}
+                    dict_of_total[reaction['id']] = 0
+                dict_of_reactions[reaction['id']][reaction['type']] += 1
+                dict_of_total[reaction['id']] += 1
+            next_page_of_reaction = {}
+            next_page_of_reaction_url = ''
+            if 'next' in post['reactions']['paging']:
+                next_page_of_reaction_url = post['reactions']['paging']['next']
+            while (next_page_of_reaction_url != ''):
+                next_page_of_reaction = requests.get(next_page_of_reaction_url).json()
+                for reaction in next_page_of_reaction['data']:
+                    if reaction['id'] not in dict_of_friends:
+                        dict_of_friends[reaction['id']] = [reaction['name'], reaction['pic']]
+                        dict_of_reactions[reaction['id']] = { 'LIKE' :  0,'LOVE' :  0,'WOW' :  0,'HAHA' :  0,'SAD' :  0,'ANGRY' :  0,'THANKFUL' :  0}
+                        dict_of_total[reaction['id']] = 0
+                    dict_of_reactions[reaction['id']][reaction['type']] += 1
+                    dict_of_total[reaction['id']] += 1
+                if 'paging' not in next_page_of_reaction:
+                    next_page_of_reaction_url = ''
+                if 'next' in next_page_of_reaction['paging']:
+                    next_page_of_reaction_url = next_page_of_reaction['paging']['next']
+                else:
+                    next_page_of_reaction_url = ''
+    
+    dict_of_total = sorted(dict_of_total.items(), key=operator.itemgetter(1), reverse=True)
+
+    list_of_friends = []
+    top_count = 0
+    if top != '':
+        top = int(top)
+    else:
+        top = -1
+    for friend in dict_of_total:
+        user_id = friend[0]
+        user_name = dict_of_friends[user_id][0]
+        user_pic = dict_of_friends[user_id][1]
+        user_total = friend[1]
+        dict_reactions = dict_of_reactions[user_id]
+        LIKE = dict_reactions['LIKE']
+        LOVE = dict_reactions['LOVE'] 
+        WOW = dict_reactions['WOW'] 
+        HAHA = dict_reactions['HAHA'] 
+        SAD = dict_reactions['SAD'] 
+        ANGRY = dict_reactions['ANGRY'] 
+        THANKFUL = dict_reactions['THANKFUL'] 
+        list_of_friends.append({'id' : user_id, 'name': user_name, 'pic' : user_pic, 'LIKE' : LIKE, 'LOVE' : LOVE, 'WOW' : WOW, 'HAHA' : HAHA, 'SAD' : SAD, 'ANGRY' : ANGRY, 'THANKFUL' : THANKFUL, 'TOTAL' : user_total})
         top_count += 1
         if top_count == top:
             break
