@@ -167,9 +167,9 @@ def top_comments(access_token,since = '', top = ''):
 def top_likes(access_token,since = '', top = ''):
     dict_of_friends = {}
     dict_of_likes = {}
-    fields = 'posts{comments{from,comments{from}}}'
+    fields = 'posts{likes{id,name,pic}}'
     if since != '':
-        fields = 'posts.since(%s){comments{from,comments{from}}}' % since
+        fields = 'posts.since(%s){likes{id,name,pic}}' % since
     list_of_posts = getData(access_token, fields)
     if 'error' in list_of_posts:
         return list_of_posts
