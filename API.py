@@ -279,7 +279,7 @@ def top_reactions(access_token,since = '', top = ''):
         SAD = dict_reactions['SAD'] 
         ANGRY = dict_reactions['ANGRY'] 
         THANKFUL = dict_reactions['THANKFUL'] 
-        list_of_friends.append({'id' : user_id, 'name': user_name, 'pic' : user_pic, 'LIKE' : LIKE, 'LOVE' : LOVE, 'WOW' : WOW, 'HAHA' : HAHA, 'SAD' : SAD, 'ANGRY' : ANGRY, 'THANKFUL' : THANKFUL, 'TOTAL' : user_total})
+        list_of_friends.append({'id' : user_id, 'name': user_name, 'pic' : user_pic, 'like' : LIKE, 'love' : LOVE, 'wow' : WOW, 'haha' : HAHA, 'sad' : SAD, 'angry' : ANGRY, 'thankful' : THANKFUL, 'total' : user_total})
         top_count += 1
         if top_count == top:
             break
