@@ -89,7 +89,7 @@ def top_comments(access_token,since = '', top = ''):
                         next_page_of_sub_com_url = comment['comments']['paging']['next']
                     while next_page_of_sub_com_url != '':
                         next_page_of_sub_com = requests.get(next_page_of_sub_com_url).json()
-                        for sub_com in next_page_of_sub_com_url['data']:
+                        for sub_com in next_page_of_sub_com['data']:
                             if sub_com['from']['id'] not in dict_of_friends:
                                 dict_of_friends[sub_com['from']['id']] = sub_com['from']['name']
                                 dict_of_comments[sub_com['from']['id']] = 1
