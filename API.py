@@ -18,6 +18,8 @@ def navigator(path, querys):
         return top_likes(query_dict['access_token'], since=since, top=top)
     elif path == '/reactions':
         return top_reactions(query_dict['access_token'], since=since, top=top)
+    elif path == '/friends':
+        return getAllFriends(query_dict['access_token'])
     else:
         return ['none']
 
@@ -29,22 +31,22 @@ def query_spliter(querys):
         query_dict[temp[0]] = temp[1]
     return query_dict
 
-def getData(access_token, fields):
+def getData(access_token, fields, types):
     start = time.time()
     base_url = 'https://graph.facebook.com/v2.10/me'
     url = '%s?fields=%s&access_token=%s' % (base_url,fields,access_token)
     content = requests.get(url).json()
     list_of_data = []
     try:
-        list_of_data = [data for data in content['posts']['data']]
+        list_of_data = [data for data in content[types]['data']]
     except:
         print('error : please check ur access token!')
         return content
 
     next_page_url = ''
-    if 'paging' in content['posts']:
-        if 'next' in content['posts']['paging']:
-            next_page_url = content['posts']['paging']['next']
+    if 'paging' in content[types]:
+        if 'next' in content[types]['paging']:
+            next_page_url = content[types]['paging']['next']
     
     while next_page_url != '':
         content = requests.get(next_page_url).json()
@@ -52,6 +54,8 @@ def getData(access_token, fields):
         if 'paging' in content:
             if 'next' in content['paging']:
                 next_page_url = content['paging']['next']
+            else:
+                next_page_url = ''
         else:
             next_page_url = ''
     end = time.time()
@@ -64,7 +68,7 @@ def top_comments(access_token,since = '', top = ''):
     fields = 'posts{comments{from,comments{from}}}'
     if since != '':
         fields = 'posts.since(%s){comments{from,comments{from}}}' % (since)
-    list_of_posts = getData(access_token, fields)
+    list_of_posts = getData(access_token, fields, 'posts')
     if 'error' in list_of_posts:
         return list_of_posts
     start = time.time()
@@ -170,7 +174,7 @@ def top_likes(access_token,since = '', top = ''):
     fields = 'posts{likes{id,name,pic}}'
     if since != '':
         fields = 'posts.since(%s){likes{id,name,pic}}' % since
-    list_of_posts = getData(access_token, fields)
+    list_of_posts = getData(access_token, fields, 'posts')
     if 'error' in list_of_posts:
         return list_of_posts
     start = time.time()
@@ -225,7 +229,7 @@ def top_reactions(access_token,since = '', top = ''):
     fields = 'posts{reactions{id,name,pic,type}}'
     if since != '':
         fields = 'posts.since(%s){reactions{id,name,pic,type}}' % since
-    list_of_posts = getData(access_token, fields)
+    list_of_posts = getData(access_token, fields, 'posts')
     if 'error' in list_of_posts:
         return list_of_posts
     start = time.time()
@@ -286,5 +290,20 @@ def top_reactions(access_token,since = '', top = ''):
     end = time.time()
     print('top likes finished in : %s secs' % str('%.3f' % (end - start)))
     return list_of_friends
+
+def getAllFriends(access_token):
+    fields = 'friendlists{id,name}'
+    list_of_friends = getData(access_token,fields, 'friendlists')
+    list_of_return_friends = []
+    for friend in list_of_friends:
+        print(friend)
+        list_of_return_friends.append(
+            {
+                'id' : friend['id'],
+                'name': friend['name'],
+                'pic': 'www.facebook.com/%s' % friend['id']
+            }
+        )
+    return list_of_return_friends
 
                 
